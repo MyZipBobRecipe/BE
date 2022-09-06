@@ -8,6 +8,7 @@ import com.example.jwtlogin.entity.Member;
 import com.example.jwtlogin.repository.ArticleRepository;
 import com.example.jwtlogin.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
+@Slf4j
 public class ArticleService {
     private final ArticleRepository articleRepository;
     private final MemberRepository memberRepository;
@@ -30,6 +32,7 @@ public class ArticleService {
         } else {
             Member member = memberRepository.findById(Long.parseLong(authentication.getName())).orElseThrow();
             boolean result = article.getMember().equals(member);
+
             return ArticleResponseDto.of(article, result);
         }
     }
@@ -49,7 +52,7 @@ public class ArticleService {
     @Transactional
     public ArticleResponseDto changeArticle(Long id, String title, String body) {
         Article article = authorizationArticleWriter(id);
-        System.out.println("dmdkr");
+
         return ArticleResponseDto.of(articleRepository.save(Article.changeArticle(article, title, body)), true);
     }
 
