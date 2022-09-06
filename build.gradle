@@ -1,6 +1,8 @@
 plugins {
 	id 'org.springframework.boot' version '2.7.3'
 	id 'io.spring.dependency-management' version '1.0.13.RELEASE'
+	//querydsl 추가
+	id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
 	id 'java'
 }
 
@@ -19,6 +21,9 @@ repositories {
 }
 
 dependencies {
+	// Querydsl 의존성
+	implementation "com.querydsl:querydsl-jpa:5.0.0"
+	implementation "com.querydsl:querydsl-apt:5.0.0"
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
@@ -26,6 +31,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
 	compileOnly 'org.projectlombok:lombok'
+
+
 	implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.2'
 	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.2'
 	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.2'
@@ -39,4 +46,37 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+//querydsl 사용 경로
+def querydslDir = "$buildDir/generated/querydsl"
+
+//querydsl 사용 설정
+querydsl {
+	jpa = true
+	querydslSourcesDir = querydslDir
+}
+
+// build 시 사용할 sourceSet
+sourceSets {
+	main.java.srcDir querydslDir
+}
+
+// compileClasspath와 annotationProcessor 상속
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+	querydsl.extendsFrom compileClasspath
+}
+
+//feature/improve-all
+// querydsl 컴파일 시 사용할 옵션.
+compileQuerydsl {
+	options.annotationProcessorPath = configurations.querydsl
+}
+
+//feature/improve-all
+// QType 정리
+clean {
+	delete file(querydslDir)
 }

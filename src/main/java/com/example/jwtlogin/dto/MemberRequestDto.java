@@ -14,13 +14,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @NoArgsConstructor
 @Builder
 public class MemberRequestDto {
+    private String email;
     private String password;
-    private String confirmpassword;
     private String nickname;
-
 
     public Member toMember(PasswordEncoder passwordEncoder) {
         return Member.builder()
+                .email(email)
                 .password(passwordEncoder.encode(password))
                 .nickname(nickname)
                 .authority(Authority.ROLE_USER)
@@ -28,6 +28,6 @@ public class MemberRequestDto {
     }
 
     public UsernamePasswordAuthenticationToken toAuthentication() {
-        return new UsernamePasswordAuthenticationToken(nickname, password);
+        return new UsernamePasswordAuthenticationToken(email, password);
     }
 }

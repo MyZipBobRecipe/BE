@@ -24,12 +24,10 @@ public class AuthService {
     private final TokenProvider tokenProvider;
 
     public MemberResponseDto signup(MemberRequestDto requestDto) {
-        if (memberRepository.existsMemberByNickname(requestDto.getNickname())) {
+        if (memberRepository.existsByEmail(requestDto.getEmail())) {
             throw new RuntimeException("이미 가입되어 있는 유저입니다");
         }
-        if (!requestDto.getConfirmpassword().equals(requestDto.getPassword())) {
-            throw new RuntimeException("확인 비밀번호가 같지 않습니다.");
-        }
+
         Member member = requestDto.toMember(passwordEncoder);
         return MemberResponseDto.of(memberRepository.save(member));
     }
@@ -43,3 +41,4 @@ public class AuthService {
     }
 
 }
+
