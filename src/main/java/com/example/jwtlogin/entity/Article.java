@@ -19,6 +19,7 @@ public class Article {
 
     @Column(nullable = false)
     private String title;
+    //test
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String body;
