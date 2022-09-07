@@ -12,50 +12,50 @@ import java.util.List;
 @Entity
 @Getter
 public class Article {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "article_id")
-    private Long id;
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        @Column(name = "article_id")
+        private Long id;
 
-    @Column(nullable = false)
-    private String title;
-    //test
+        @Column(nullable = false)
+        private String title;
+        //test
+        //test2
+        @Column(nullable = false, columnDefinition = "TEXT")
+        private String body;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
-    private String body;
+        @CreationTimestamp
+        @Column
+        private LocalDateTime createdAt = LocalDateTime.now();
 
-    @CreationTimestamp
-    @Column
-    private LocalDateTime createdAt = LocalDateTime.now();
+        @UpdateTimestamp
+        @Column
+        private LocalDateTime updatedAt = LocalDateTime.now();
 
-    @UpdateTimestamp
-    @Column
-    private LocalDateTime updatedAt = LocalDateTime.now();
+        @OneToMany(mappedBy = "article", cascade = CascadeType.REMOVE)
+        private List<Comment> comments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "article", cascade = CascadeType.REMOVE)
-    private List<Comment> comments = new ArrayList<>();
+        @OneToMany(mappedBy = "article", cascade = CascadeType.REMOVE)
+        private List<Recommend> recommends = new ArrayList<>();
 
-    @OneToMany(mappedBy = "article", cascade = CascadeType.REMOVE)
-    private List<Recommend> recommends = new ArrayList<>();
+        @ManyToOne(fetch = FetchType.LAZY)
+        @JoinColumn(name = "member_id")
+        private Member member;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
+        public static Article createArticle (String title, String body, Member member) {
+            Article article = new Article();
+            article.title = title;
+            article.body = body;
+            article.member = member;
 
-    public static Article createArticle (String title, String body, Member member) {
-        Article article = new Article();
-        article.title = title;
-        article.body = body;
-        article.member = member;
+            return article;
+        }
 
-        return article;
-    }
+        public static Article changeArticle (Article article, String title, String body) {
+            article.title = title;
+            article.body = body;
 
-    public static Article changeArticle (Article article, String title, String body) {
-        article.title = title;
-        article.body = body;
-
-        return article;
-    }
+            return article;
+        }
 
 }
